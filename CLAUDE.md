@@ -7,13 +7,14 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
 - Audience: employers, agencies, production companies (not end clients; client-facing Turkish site is yapayzekareklamlarim.com, separate project).
 - Positioning: "both sides of the camera" — real on-set documentary/camera work + AI commercial direction.
 - Showreel should open with real footage, then AI work.
-- Keep consistent with LinkedIn and the CV (assets/cv/): titles, dates, project names.
+- Keep consistent with LinkedIn and the CV (public/assets/cv/): titles, dates, project names.
 
 ## Stack decisions
 - Plain static HTML/CSS/JS, no build step (keeps it editable by hand).
-- Hosting: Cloudflare Pages connected to this repo (auto-deploy on push to main).
-- Videos: NOT committed to the repo. Full videos go to Cloudflare R2 (public bucket); only small posters/thumbnails live in assets/img.
-  Cloudflare Pages has a 25 MiB per-file limit.
+- Hosting: Cloudflare Workers static assets (wrangler.jsonc, serves ./public), Git-connected: auto-deploy on push to main.
+- Only files inside public/ are published. Notes (README, CLAUDE.md) stay outside it.
+- Videos: NOT committed to the repo. Full videos go to Cloudflare R2 (public bucket); only small posters/thumbnails live in public/assets/img.
+  Cloudflare static assets have a 25 MiB per-file limit.
 - Domain rsefaaktas.com is registered at GoDaddy; DNS will move to Cloudflare at launch. Old site stays live until then.
 
 ## Content rules
