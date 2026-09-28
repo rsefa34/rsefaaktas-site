@@ -9,6 +9,13 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
 - Showreel should open with real footage, then AI work.
 - Keep consistent with LinkedIn and the CV (public/assets/cv/): titles, dates, project names.
 
+## Design direction (decided by Sefa, 2026-09-28)
+- Dark & cinematic: charcoal / smoky dark-grey background, not pure black. Video pixels should "glow" like a cinema screen.
+- Opening: calm and minimal. Only his name + a short manifesto line in a clean, calm typeface. NO full-screen autoplay video on load.
+  The showreel/videos come in with a smooth After-Effects-like transition (fade-in / ease-out) or on slight scroll.
+- Reference: worthitdocs.com (sparse, unhurried, text-first editorial structure; project cards with title, client, duration),
+  but with more fluid motion-graphic touches than the reference.
+
 ## Stack decisions
 - Plain static HTML/CSS/JS, no build step (keeps it editable by hand).
 - Hosting: Cloudflare Workers static assets (wrangler.jsonc, serves ./public), Git-connected: auto-deploy on push to main.
