@@ -2,6 +2,9 @@
   // Cloudflare Workers static site config for rsefaaktas.com
   "name": "rsefaaktas-site",
   "compatibility_date": "2026-09-01",
+  // workers.dev address stays on as a test URL; every push also gets its own preview link
+  "workers_dev": true,
+  "preview_urls": true,
   "assets": {
     "directory": "./public",
     "not_found_handling": "404-page"
