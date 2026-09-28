@@ -1,0 +1,6 @@
+.DS_Store
+Thumbs.db
+*.mov
+*.mp4
+!assets/video/.gitkeep
+node_modules/
