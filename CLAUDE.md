@@ -16,6 +16,18 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
 - Reference: worthitdocs.com (sparse, unhurried, text-first editorial structure; project cards with title, client, duration),
   but with more fluid motion-graphic touches than the reference.
 
+## Page structure (first draft, 2026-10-02)
+- public/index.html is a single page: opening (name + "Camera Operator & AI Commercial Director"), the statement
+  "One eye, two cameras: one real, one artificial." shown with one real 16:9 frame and one AI 9:16 frame,
+  "On set" (camera projects), "In AI" (9:16 cards), clients, about, contact.
+- Sefa chose the title line for the opening over a manifesto; the statement lives in the second section.
+- public/assets/css/site.css holds the tokens (smoke, well, bone, ash, tungsten, tally). Typeface: Albert Sans.
+- Motion is deliberately limited to the opening sequence and the two frames opening once. Do not add per-section reveals.
+- AI cards use silent 6-second previews in public/assets/video (480x854, small). Full films are not on the site yet.
+- Photos with faces/landmarks were graded from the original pixels (the AI editor redrew them); see git log.
+- Still to add: kitchen shoot and bridge photos (camera-assistant era; the bridge photo shows a colleague, caption it "on set"),
+  full videos on R2 with a player, showreel, real footage clips.
+
 ## Stack decisions
 - Plain static HTML/CSS/JS, no build step (keeps it editable by hand).
 - Hosting: Cloudflare Workers static assets (wrangler.jsonc, serves ./public), Git-connected: auto-deploy on push to main.

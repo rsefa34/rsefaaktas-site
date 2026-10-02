@@ -4,38 +4,228 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Recep Sefa Aktaş | Camera Operator & AI Commercial Director</title>
-  <meta name="description" content="Camera operator on corporate documentaries and AI commercial director. Portfolio coming soon.">
-  <style>
-    :root { --bg: #0b0b0c; --fg: #f2f0ea; --muted: #8d8a82; --line: #2a2a2c; }
-    * { box-sizing: border-box; margin: 0; }
-    html, body { height: 100%; }
-    body {
-      background: var(--bg); color: var(--fg);
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      display: grid; place-items: center; padding: 24px;
-    }
-    main { max-width: 640px; width: 100%; }
-    .rec { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; }
-    .rec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #e0362c; animation: blink 1.6s infinite; }
-    @keyframes blink { 50% { opacity: .2; } }
-    h1 { font-size: clamp(36px, 7vw, 64px); line-height: 1.02; letter-spacing: -.02em; margin: 20px 0 12px; font-weight: 700; }
-    p { color: var(--muted); font-size: 17px; line-height: 1.5; }
-    nav { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 12px 24px; }
-    a { color: var(--fg); text-decoration: none; font-size: 15px; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
-    a:hover { border-color: var(--fg); }
-  </style>
+  <meta name="description" content="Recep Sefa Aktaş is a camera operator on corporate documentaries and a director of cinematic AI commercials, based in Istanbul.">
+  <meta property="og:title" content="Recep Sefa Aktaş | Camera Operator & AI Commercial Director">
+  <meta property="og:description" content="One eye, two cameras: one real, one artificial.">
+  <meta property="og:image" content="/assets/img/photos/tupras-kamera-16x9.jpg">
+  <meta name="theme-color" content="#25272b">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body>
-  <main>
-    <span class="rec">New site in production</span>
-    <h1>Recep Sefa Aktaş</h1>
-    <p>Camera Operator &amp; AI Commercial Director. Corporate documentaries on set, cinematic AI commercials in the studio.</p>
-    <nav>
-      <a href="mailto:rsefaaktas@gmail.com">rsefaaktas@gmail.com</a>
-      <a href="https://www.linkedin.com/in/rsefaaktas" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="assets/cv/Recep_Sefa_Aktas_CV_EN.pdf" target="_blank">CV (EN)</a>
-      <a href="assets/cv/Recep_Sefa_Aktas_CV_TR.pdf" target="_blank">CV (TR)</a>
-    </nav>
-  </main>
+
+<header class="bar" id="bar">
+  <a class="bar-name" href="#top">R. Sefa Aktaş</a>
+  <nav aria-label="Sections">
+    <a href="#on-set">On set</a>
+    <a href="#ai">AI</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- Opening: name and title only -->
+  <section class="hero" aria-label="Introduction">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <div class="hero-text">
+      <h1>Recep Sefa Aktaş</h1>
+      <p class="hero-role">Camera Operator &amp; AI Commercial Director</p>
+    </div>
+    <p class="hero-place"><span class="tally" aria-hidden="true"></span>Istanbul</p>
+    <a class="hero-scroll" href="#two-cameras">Scroll<span aria-hidden="true"></span></a>
+  </section>
+
+  <!-- The statement, explained by one real frame and one artificial frame -->
+  <section class="two" id="two-cameras">
+    <h2 class="statement">One eye, two cameras: one real, one artificial.</h2>
+    <div class="two-frames">
+      <a class="frame frame-wide" href="#on-set">
+        <img src="assets/img/photos/tupras-kamera-16x9.jpg" width="1672" height="941" alt="Camera operator in a hard hat with a cinema camera at the Tüpraş refinery">
+        <span class="frame-tag">Real, 16:9</span>
+      </a>
+      <a class="frame frame-tall" href="#ai">
+        <video muted loop playsinline preload="none" poster="assets/img/posters/blosse.jpg" data-autoplay>
+          <source src="assets/video/blosse.mp4" type="video/mp4">
+        </video>
+        <span class="frame-tag">Artificial, 9:16</span>
+      </a>
+    </div>
+    <div class="two-captions">
+      <p>On set at the Tüpraş refinery for the Koç Holding 100th Anniversary Documentary.</p>
+      <p>An AI commercial for the florist Blosse.</p>
+    </div>
+  </section>
+
+  <!-- Real camera -->
+  <section class="chapter" id="on-set">
+    <div class="chapter-head">
+      <h2>On set</h2>
+      <p>Second camera operator and camera assistant at İdealist Yapım, a documentary production company in Istanbul. Corporate documentaries, executive interviews and live events.</p>
+    </div>
+
+    <article class="project project-lead">
+      <div class="project-text">
+        <h3><em>Koç Holding 100th Anniversary Documentary</em></h3>
+        <p>Second camera and camera assistance across refineries, factories, archives and executive interviews. One week in Kocaeli and Bursa covered three cities, four facilities and eighteen interviews.</p>
+        <dl>
+          <div><dt>Production</dt><dd>İdealist Yapım</dd></div>
+          <div><dt>Cameras</dt><dd>Sony FX3, Canon C200</dd></div>
+        </dl>
+      </div>
+      <figure class="project-main">
+        <img loading="lazy" src="assets/img/photos/tofas-kamera-16x9.jpg" width="1672" height="941" alt="Camera crew member in a safety vest operating a camera on the Tofaş factory floor">
+        <figcaption>Tofaş factory, Bursa</figcaption>
+      </figure>
+      <div class="strip" tabindex="0" aria-label="More frames from the Koç Holding documentary">
+        <figure><img loading="lazy" src="assets/img/photos/tofas-roportaj-16x9.jpg" width="1672" height="941" alt="Two-camera interview setup on a factory floor"><figcaption>Interview setup, Tofaş</figcaption></figure>
+        <figure><img loading="lazy" src="assets/img/photos/arsiv-01-21x9.jpg" width="2400" height="1029" alt="Camera on a slider over an archive document"><figcaption>Koç archive, document macro</figcaption></figure>
+        <figure class="tall"><img loading="lazy" src="assets/img/photos/koc-ceo-monitor-4x5.jpg" width="800" height="1000" alt="Camera monitor showing an executive interview being recorded"><figcaption>CEO interview, camera monitor</figcaption></figure>
+        <figure><img loading="lazy" src="assets/img/photos/tupras-set-16x9.jpg" width="1672" height="941" alt="Crew filming in an office with a softbox and two cameras"><figcaption>Tüpraş, interview set</figcaption></figure>
+        <figure><img loading="lazy" src="assets/img/photos/arsiv-03-21x9.jpg" width="1916" height="821" alt="Camera rig under an LED panel in an archive room"><figcaption>Koç archive, lighting</figcaption></figure>
+        <figure><img loading="lazy" src="assets/img/photos/tofas-tabela-16x9.jpg" width="1672" height="941" alt="Koç sign on a building at sunset"><figcaption>Tofaş, exterior</figcaption></figure>
+        <figure><img loading="lazy" src="assets/img/photos/arsiv-02-21x9.jpg" width="2400" height="1029" alt="Archive papers and film on a round table lit from above"><figcaption>Koç archive, table</figcaption></figure>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="project-text">
+        <h3><em>IC Holding Documentary</em></h3>
+        <p>Location shoots at the Akkuyu Nuclear Power Plant construction site.</p>
+        <dl>
+          <div><dt>Production</dt><dd>İdealist Yapım</dd></div>
+        </dl>
+      </div>
+      <figure class="project-main">
+        <img loading="lazy" src="assets/img/photos/akkuyu-16x9.jpg" width="1920" height="1080" alt="Camera operator on a gimbal overlooking the Akkuyu power plant site and the sea">
+        <figcaption>Akkuyu, Mersin</figcaption>
+      </figure>
+    </article>
+
+    <div class="trio">
+      <article>
+        <figure><img loading="lazy" src="assets/img/photos/vehbi-koc-16x9.jpg" width="800" height="450" alt="Sefa checking a camera on stage beside a large Koç logo"></figure>
+        <h3><em>25th Vehbi Koç Awards</em></h3>
+        <p>Event coverage with İdealist Yapım.</p>
+      </article>
+      <article>
+        <figure><img loading="lazy" src="assets/img/photos/husnu-ozyegin-4x5.jpg" width="600" height="750" alt="Interview being lit and filmed in a lounge"></figure>
+        <h3><em>Hüsnü Özyeğin 50th Anniversary Book Project</em></h3>
+        <p>Interview shoots.</p>
+      </article>
+      <article>
+        <figure><img loading="lazy" src="assets/img/photos/koc-yilbasi-monitor-4x5.jpg" width="600" height="750" alt="Camera screen during an evening event"></figure>
+        <h3><em>Koç Holding 2026 New Year’s Event</em></h3>
+        <p>Second camera on Sony FX3.</p>
+      </article>
+    </div>
+
+    <div class="stills">
+      <h3>Stills on location</h3>
+      <div class="stills-row">
+        <figure><img loading="lazy" src="assets/img/photos/mesher-kitap-21x9.jpg" width="2400" height="1029" alt="Open antique book with an engraving, lit warmly"><figcaption>Meşher, Istanbul</figcaption></figure>
+        <figure><img loading="lazy" src="assets/img/photos/rahmi-koc-21x9.jpg" width="2400" height="1029" alt="Stone museum building and ornate street lamps against the sky"><figcaption>Rahmi M. Koç Museum, Istanbul</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Artificial camera -->
+  <section class="chapter" id="ai">
+    <div class="chapter-head">
+      <h2>In AI</h2>
+      <p>Founder and director at Yapay Zeka Reklamlarım. Commercials and product films generated with AI, directed like a real shoot: script, shot list, light and lens first.</p>
+    </div>
+
+    <ul class="reel">
+      <li><div class="card" tabindex="0"><video muted loop playsinline preload="none" poster="assets/img/posters/mr-valeria.jpg"><source src="assets/video/mr-valeria.mp4" type="video/mp4"></video></div><h3><em>Mr. Valeria</em></h3><p>Home textile, product film<span>0:21</span></p></li>
+      <li><div class="card" tabindex="0"><video muted loop playsinline preload="none" poster="assets/img/posters/blosse.jpg"><source src="assets/video/blosse.mp4" type="video/mp4"></video></div><h3><em>Blosse</em></h3><p>Florist, brand film<span>0:40</span></p></li>
+      <li><div class="card" tabindex="0"><video muted loop playsinline preload="none" poster="assets/img/posters/favory.jpg"><source src="assets/video/favory.mp4" type="video/mp4"></video></div><h3><em>Favory Turizm</em></h3><p>VIP transfer, commercial<span>0:39</span></p></li>
+      <li><div class="card" tabindex="0"><video muted loop playsinline preload="none" poster="assets/img/posters/wallart.jpg"><source src="assets/video/wallart.mp4" type="video/mp4"></video></div><h3><em>Wallart</em></h3><p>Wall art, product film<span>0:25</span></p></li>
+      <li><div class="card" tabindex="0"><video muted loop playsinline preload="none" poster="assets/img/posters/afetx.jpg"><source src="assets/video/afetx.mp4" type="video/mp4"></video></div><h3><em>AfetX</em></h3><p>Earthquake kits, product film<span>0:32</span></p></li>
+      <li><div class="card" tabindex="0"><video muted loop playsinline preload="none" poster="assets/img/posters/gazelmanya.jpg"><source src="assets/video/gazelmanya.mp4" type="video/mp4"></video></div><h3><em>Gazelmanya Sports</em></h3><p>Sportswear, product film<span>0:23</span></p></li>
+      <li><div class="card" tabindex="0"><video muted loop playsinline preload="none" poster="assets/img/posters/tire-sut.jpg"><source src="assets/video/tire-sut.mp4" type="video/mp4"></video></div><h3><em>Tire Süt Kooperatifi</em></h3><p>Dairy, commercial<span>0:15</span></p></li>
+      <li><div class="card" tabindex="0"><video muted loop playsinline preload="none" poster="assets/img/posters/lambolo.jpg"><source src="assets/video/lambolo.mp4" type="video/mp4"></video></div><h3><em>Lambolo</em></h3><p>Decorative switch covers, commercial<span>0:29</span></p></li>
+    </ul>
+    <p class="reel-note">These are silent six-second cuts. Full films with sound are available on request.</p>
+  </section>
+
+  <!-- Who the work was for -->
+  <section class="clients" aria-label="Clients">
+    <div class="clients-group">
+      <h2>On set for</h2>
+      <ul class="logos logos-large">
+        <li><img loading="lazy" src="assets/img/logos/logo-koc.png" alt="Koç Holding"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-ic-holding.png" alt="IC Holding"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-idealist.png" alt="İdealist Yapım"></li>
+      </ul>
+    </div>
+    <div class="clients-group">
+      <h2>AI commercials for</h2>
+      <ul class="logos">
+        <li><img loading="lazy" src="assets/img/logos/logo-tabloplus.png" alt="Tabloplus"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-mr-valeria.png" alt="Mr. Valeria"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-gazelmanya.png" alt="Gazelmanya Sports"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-afetx.png" alt="AfetX"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-favory.png" alt="Favory Turizm"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-tire-sut.png" alt="Tire Süt Kooperatifi"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-egitimlabs.png" alt="EğitimLabs"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-ticabyte.png" alt="Ticabyte"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-beeasist.png" alt="Beeasist"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-footbalance.png" alt="FootBalance"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-senn-yapi.png" alt="Şenn Yapı"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-yilmazer.png" alt="Yılmazer Gayrimenkul"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-milami.png" alt="Milami"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-tba.png" alt="TBA Mimarlık"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-clerie.png" alt="Clerie"></li>
+        <li><img loading="lazy" src="assets/img/logos/logo-zio.png" alt="ZIO"></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about" id="about">
+    <figure class="about-photo">
+      <img loading="lazy" src="assets/img/photos/arcelik-portre-4x5.jpg" width="864" height="1080" alt="Recep Sefa Aktaş looking past a cinema camera on a factory floor">
+    </figure>
+    <div class="about-text">
+      <h2>About</h2>
+      <p>I started as a camera assistant on documentary sets, building cameras, running cable and watching how experienced cinematographers place a light. Today I operate second camera on large corporate documentaries.</p>
+      <p>Alongside that I direct AI commercials for brands. The tools are new, but the decisions are the ones I make on set: where the light comes from, what the lens sees, and what the frame leaves out.</p>
+      <dl class="facts">
+        <div><dt>Based in</dt><dd>Istanbul, Türkiye</dd></div>
+        <div><dt>Education</dt><dd>BA in Radio, Television and Cinema, Marmara University</dd></div>
+        <div><dt>Cameras</dt><dd>Sony FX3, Canon C200, Canon 5D Mark IV</dd></div>
+        <div><dt>Post</dt><dd>Adobe Premiere Pro, DaVinci Resolve, After Effects</dd></div>
+        <div><dt>AI tools</dt><dd>Kling AI, Seedance, Google Veo and Flow, Nano Banana, Higgsfield</dd></div>
+        <div><dt>Languages</dt><dd>Turkish, English</dd></div>
+      </dl>
+      <p class="cv">
+        <a class="button" href="assets/cv/Recep_Sefa_Aktas_CV_EN.pdf" target="_blank" rel="noopener">Download CV (English)</a>
+        <a class="button button-quiet" href="assets/cv/Recep_Sefa_Aktas_CV_TR.pdf" target="_blank" rel="noopener">Download CV (Türkçe)</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact" id="contact">
+    <h2>For crew calls, commercials and full films</h2>
+    <a class="mail" href="mailto:rsefaaktas@gmail.com">rsefaaktas@gmail.com</a>
+    <ul class="links">
+      <li><a href="https://www.linkedin.com/in/rsefaaktas" target="_blank" rel="noopener">LinkedIn</a></li>
+      <li><a href="https://yapayzekareklamlarim.com" target="_blank" rel="noopener">Yapay Zeka Reklamlarım</a></li>
+    </ul>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>© 2026 Recep Sefa Aktaş</p>
+  <a href="#top">Back to top</a>
+</footer>
+
+<script src="assets/js/site.js" defer></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 .DS_Store
 Thumbs.db
 *.mov
+# full-length videos live on Cloudflare R2; only short previews are committed
 *.mp4
-!assets/video/.gitkeep
+!public/assets/video/*.mp4
 node_modules/
