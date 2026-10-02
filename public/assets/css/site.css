@@ -218,6 +218,40 @@ figcaption { margin-top: 8px; font-size: 14px; color: var(--ash); }
 .reel p span { font-variant-numeric: tabular-nums; flex: none; }
 .reel-note { margin-top: clamp(32px, 4vw, 56px); font-size: 15px; color: var(--ash); }
 
+/* play mark and full-film player */
+.card { cursor: pointer; }
+.card-play {
+  position: absolute; left: 12px; bottom: 12px; width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(28, 30, 33, .72); backdrop-filter: blur(6px);
+  transition: background .25s, transform .25s var(--ease);
+}
+.card-play::before {
+  content: ""; position: absolute; left: 13px; top: 10px;
+  border-style: solid; border-width: 7px 0 7px 11px; border-color: transparent transparent transparent var(--bone);
+}
+.card:hover .card-play, .card:focus-visible .card-play { background: var(--tungsten); transform: scale(1.08); }
+.card:hover .card-play::before, .card:focus-visible .card-play::before { border-left-color: var(--well); }
+
+.player {
+  width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: 100dvh;
+  margin: 0; padding: clamp(14px, 3vh, 32px) var(--gutter); border: 0;
+  background: rgba(24, 25, 28, .96); color: var(--bone);
+  display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+}
+.player[open] { display: flex; animation: lift .45s var(--ease); }
+.player::backdrop { background: rgba(24, 25, 28, .96); }
+@keyframes lift { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+.player-stage { flex: 0 1 auto; min-height: 0; height: min(84dvh, 1280px); aspect-ratio: 9 / 16; max-width: 100%; background: var(--well); }
+.player-stage video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+.player-bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: min(100%, calc(84dvh * 9 / 16)); min-width: 260px; }
+.player-title { font-style: italic; font-size: 18px; }
+.player-close {
+  font: inherit; font-size: 15px; color: var(--bone); background: transparent;
+  border: 1px solid var(--line); padding: 8px 16px; cursor: pointer; transition: border-color .2s;
+}
+.player-close:hover { border-color: var(--bone); }
+.player-msg { color: var(--ash); font-size: 15px; text-align: center; }
+
 /* ---------- Clients ---------- */
 .clients { padding: clamp(56px, 8vw, 110px) var(--gutter); border-top: 1px solid var(--line); background: var(--well); }
 .clients-group + .clients-group { margin-top: clamp(40px, 6vw, 72px); }
@@ -308,4 +342,5 @@ figcaption { margin-top: 8px; font-size: 14px; color: var(--ash); }
   .frame { clip-path: none; transition: none; }
   .tally, .hero-scroll span { animation: none; }
   .frame img, .frame video { transition: none; }
+  .player[open] { animation: none; }
 }

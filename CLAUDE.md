@@ -23,10 +23,17 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
 - Sefa chose the title line for the opening over a manifesto; the statement lives in the second section.
 - public/assets/css/site.css holds the tokens (smoke, well, bone, ash, tungsten, tally). Typeface: Albert Sans.
 - Motion is deliberately limited to the opening sequence and the two frames opening once. Do not add per-section reveals.
-- AI cards use silent 6-second previews in public/assets/video (480x854, small). Full films are not on the site yet.
+- AI cards use silent 6-second previews in public/assets/video (480x854, small).
+- Full films (1080x1920 H.264, ~4-12 MB, with sound) are on Cloudflare R2, bucket `rsefaaktas-media`,
+  public URL https://pub-76ee4d9ab6aa4a3988c80d9618f887d1.r2.dev/<name>.mp4 (same names as the previews).
+  The base URL is the MEDIA constant at the top of public/assets/js/site.js.
+- Sefa's rule: do NOT wait for a click to download. After the page has loaded, full films are fetched in the
+  background (two at a time, cards near the viewport first) so they play instantly. On mobile data / data-saver
+  only the start is buffered. This needs a CORS policy on the bucket (GET from the site origins); without it the
+  player falls back to normal streaming.
 - Photos with faces/landmarks were graded from the original pixels (the AI editor redrew them); see git log.
 - Still to add: kitchen shoot and bridge photos (camera-assistant era; the bridge photo shows a colleague, caption it "on set"),
-  full videos on R2 with a player, showreel, real footage clips.
+  the remaining films on R2 (only the 8 featured ones are encoded), showreel, real footage clips.
 
 ## Stack decisions
 - Plain static HTML/CSS/JS, no build step (keeps it editable by hand).
