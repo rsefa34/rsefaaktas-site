@@ -218,6 +218,14 @@ figcaption { margin-top: 8px; font-size: 14px; color: var(--ash); }
 .reel p span { font-variant-numeric: tabular-nums; flex: none; }
 .reel-note { margin-top: clamp(32px, 4vw, 56px); font-size: 15px; color: var(--ash); }
 
+/* second tier: same cards, smaller */
+.more-head { margin: clamp(48px, 7vw, 96px) 0 22px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 17px; font-weight: 400; color: var(--ash); }
+.reel-more { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(24px, 3vw, 40px) clamp(10px, 1.6vw, 22px); }
+.reel-more h3 { font-size: 16px; margin-top: 10px; }
+.reel-more p { font-size: 13px; }
+.reel-more .card-play { width: 28px; height: 28px; left: 9px; bottom: 9px; }
+.reel-more .card-play::before { left: 11px; top: 8px; border-width: 6px 0 6px 9px; }
+
 /* play mark and full-film player */
 .card { cursor: pointer; }
 .card-play {
@@ -316,6 +324,7 @@ figcaption { margin-top: 8px; font-size: 14px; color: var(--ash); }
   .chapter-head, .project, .about { grid-template-columns: 1fr; }
   .chapter-head { align-items: start; gap: 20px; }
   .reel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .reel-more { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .trio { grid-template-columns: 1fr 1fr; align-items: start; }
   .trio article:first-child { grid-column: 1 / -1; }
   .about-photo { max-width: 340px; }

@@ -33,7 +33,8 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
   player falls back to normal streaming.
 - Photos with faces/landmarks were graded from the original pixels (the AI editor redrew them); see git log.
 - Still to add: kitchen shoot and bridge photos (camera-assistant era; the bridge photo shows a colleague, caption it "on set"),
-  the remaining films on R2 (only the 8 featured ones are encoded), showreel, real footage clips.
+  showreel, real footage clips. 17 films are encoded (8 featured + 9 under "More films", which preload only when approached).
+  Not on the site: Bipaketçi (Veo watermark), ZIO (unconfirmed), Clerie (720p only), 3 large Tabloplus files and TBA (never copied over).
 
 ## Stack decisions
 - Plain static HTML/CSS/JS, no build step (keeps it editable by hand).

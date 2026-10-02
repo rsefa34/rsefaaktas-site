@@ -36,12 +36,13 @@
   cards.forEach(function (c) {
     var n = c.getAttribute('data-film');
     films[n] = { url: MEDIA + n + '.mp4', blob: null, state: 'idle' };
-    queue.push(n);
+    if (!c.hasAttribute('data-later')) queue.push(n);   // "More films" join the line only when approached
   });
 
   function want(name) {            // move a film to the front of the line
     var i = queue.indexOf(name);
     if (i > 0) { queue.splice(i, 1); queue.unshift(name); }
+    else if (i < 0 && films[name].state === 'idle') queue.unshift(name);
     pump();
   }
   function pump() {
