@@ -22,18 +22,26 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
   "On set" (camera projects), "In AI" (9:16 cards), clients, about, contact.
 - Sefa chose the title line for the opening over a manifesto; the statement lives in the second section.
 - public/assets/css/site.css holds the tokens (smoke, well, bone, ash, tungsten, tally). Typeface: Albert Sans.
-- Motion is deliberately limited to the opening sequence and the two frames opening once. Do not add per-section reveals.
+- Revision of 2026-10-07 (Sefa's feedback) supersedes the earlier "keep motion minimal" rule: he wants fluid,
+  After-Effects / iOS-like transitions and rounded corners (token --r), no flat empty backdrops.
+- "In AI" is two horizontal rails (scroll-snap, arrow buttons, cards turn slightly in 3D as they travel):
+  "Selected films" (6) and "More films" (11). Do not put all films in one grid again; he found 17 at once too long.
+- Player: the clicked card grows into the film (FLIP), the page blurs behind it and the film's poster, blurred,
+  lights the backdrop. Prev/next (buttons, arrow keys, swipe) turn between films with a 3D slide.
+- Client logos: "On set for" is a static row; "AI commercials for" is a slow endless drift that pauses on hover/touch.
+  Logo heights come from each file's aspect ratio (inline --h) so marks weigh the same; no fixed-width boxes.
+- Top bar has a blurred solid surface. About has an availability line. Phone strips show a partial next frame.
 - AI cards use silent 6-second previews in public/assets/video (480x854, small).
 - Full films (1080x1920 H.264, ~4-12 MB, with sound) are on Cloudflare R2, bucket `rsefaaktas-media`,
   public URL https://pub-76ee4d9ab6aa4a3988c80d9618f887d1.r2.dev/<name>.mp4 (same names as the previews).
   The base URL is the MEDIA constant at the top of public/assets/js/site.js.
-- Sefa's rule: do NOT wait for a click to download. After the page has loaded, full films are fetched in the
-  background (two at a time, cards near the viewport first) so they play instantly. On mobile data / data-saver
-  only the start is buffered. This needs a CORS policy on the bucket (GET from the site origins); without it the
-  player falls back to normal streaming.
+- Sefa's rule: do NOT wait for a click to download. After the page has loaded, the 6 selected films are fetched in the
+  background (two at a time); "More films" join when their rail is approached. On mobile data / data-saver only the
+  start is buffered. Needs a CORS policy on the bucket (GET from the site origins); without it the player streams.
+- No real camera footage exists for the site; Sefa decided to leave the camera side as photographs.
 - Photos with faces/landmarks were graded from the original pixels (the AI editor redrew them); see git log.
 - Still to add: kitchen shoot and bridge photos (camera-assistant era; the bridge photo shows a colleague, caption it "on set"),
-  showreel, real footage clips. 17 films are encoded (8 featured + 9 under "More films", which preload only when approached).
+  17 films are encoded.
   Not on the site: Bipaketçi (Veo watermark), ZIO (unconfirmed), Clerie (720p only), 3 large Tabloplus files and TBA (never copied over).
 
 ## Stack decisions
