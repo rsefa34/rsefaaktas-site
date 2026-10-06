@@ -22,8 +22,17 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
   "On set" (camera projects), "In AI" (9:16 cards), clients, about, contact.
 - Sefa chose the title line for the opening over a manifesto; the statement lives in the second section.
 - public/assets/css/site.css holds the tokens (smoke, well, bone, ash, tungsten, tally). Typeface: Albert Sans.
-- Revision of 2026-10-07 (Sefa's feedback) supersedes the earlier "keep motion minimal" rule: he wants fluid,
-  After-Effects / iOS-like transitions and rounded corners (token --r), no flat empty backdrops.
+- MOTION POLICY (current, set 2026-10-07 from Sefa's feedback; it replaces the first draft's "opening only" rule):
+  Sefa wants fluid After-Effects / iOS-like transitions and rounded corners (token --r), no flat empty backdrops.
+  Motion that exists: opening sequence, the two frames opening once, rail cards turning slightly (mouse devices only),
+  the logo drift, card-to-player growth and the 3D turn between films. Motion answers an action or drifts slowly;
+  do NOT add scroll-triggered fade/slide reveals per section. If more is asked, weigh it against the "calm, unhurried" brief.
+- prefers-reduced-motion is supported everywhere: no opening animation, no card turn, logos become a static wrapped row,
+  the player opens/steps/closes without animation, previews do not autoplay. Keep this working when adding motion.
+- iPhone Safari safeguards (reasoned, not verified on a device — no WebKit in the test environment):
+  one <video> element is reused for the whole player session (sound may only start inside the tap);
+  a cached blob that fails falls back to the direct URL; :hover rules that pause/scale are inside @media (hover: hover);
+  Safari has no navigator.connection, so phones without it are treated as metered (stream only, no background download).
 - "In AI" is two horizontal rails (scroll-snap, arrow buttons, cards turn slightly in 3D as they travel):
   "Selected films" (6) and "More films" (11). Do not put all films in one grid again; he found 17 at once too long.
 - Player: the clicked card grows into the film (FLIP), the page blurs behind it and the film's poster, blurred,

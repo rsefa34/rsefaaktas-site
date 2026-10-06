@@ -38,6 +38,8 @@
      data-saver on, only the start of a film is buffered and the rest streams while it plays. */
   var conn = navigator.connection || {};
   var light = !!conn.saveData || conn.type === 'cellular' || /(^|-)2g|3g/.test(conn.effectiveType || '');
+  // Safari gives no connection info. On a phone we then assume a metered line and only stream.
+  if (!navigator.connection && !hoverable) light = true;
   var films = {}, queue = [], active = 0, started = false;
   cards.forEach(function (c) {
     var n = c.getAttribute('data-film');
@@ -89,7 +91,7 @@
       ticking = false;
       var max = track.scrollWidth - track.clientWidth - 2;
       if (btns.length) { btns[0].disabled = track.scrollLeft <= 2; btns[1].disabled = track.scrollLeft >= max; }
-      if (reduce) return;
+      if (reduce || !hoverable) return;
       var box = track.getBoundingClientRect(), mid = box.left + box.width / 2, half = box.width / 2;
       items.forEach(function (li) {
         var r = li.getBoundingClientRect();
@@ -132,12 +134,19 @@
     titleEl.textContent = card.getAttribute('data-title');
     kindEl.textContent = card.getAttribute('data-kind') || '';
     glow.style.backgroundImage = 'url("' + poster + '")';
-    if (current) { current.pause(); current.removeAttribute('src'); current.load(); }
-    var v = document.createElement('video');
-    v.controls = true; v.playsInline = true; v.autoplay = true; v.poster = poster;
+    var v = current;
+    if (!v) {
+      v = document.createElement('video');
+      v.controls = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.autoplay = true;
+      v.addEventListener('error', function () {
+        // a cached copy that will not play falls back to streaming the file directly
+        var film = films[v.getAttribute('data-name')];
+        if (film && v.src !== film.url) { v.src = film.url; play(v); } else { msg.hidden = false; }
+      });
+      stage.textContent = ''; stage.appendChild(v); current = v;
+    }
+    v.pause(); v.setAttribute('data-name', name); v.poster = poster;
     v.src = f.blob || f.url;
-    v.addEventListener('error', function () { msg.hidden = false; });
-    stage.textContent = ''; stage.appendChild(v); current = v;
     play(v);
     // keep the neighbours ready so stepping through is instant
     [index - 1, index + 1].forEach(function (i) { var c = cards[(i + cards.length) % cards.length]; near(c.getAttribute('data-film')); });
