@@ -38,7 +38,7 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
 - Player: the clicked card grows into the film (FLIP), the page blurs behind it and the film's poster, blurred,
   lights the backdrop. Prev/next (buttons, arrow keys, swipe) turn between films with a 3D slide.
 - Player/viewer arrows are translucent glass and always sit to the left and right of the film or photo (also on phones;
-  Sefa rejected arrows underneath). A ring (.player-wait) shows over the poster while a film is still loading.
+  Sefa rejected arrows underneath). No loading spinner: Sefa asked for one, then withdrew it.
 - Photos: every `main figure img` opens in a full-screen viewer (dialog #viewer) built like the film player:
   grows from its place, blurred backdrop lit by the photo, prev/next by buttons, arrow keys or swipe, shrinks back on close.
 - Client logos: "On set for" is a static row; "AI commercials for" is a slow endless drift that pauses on hover/touch.

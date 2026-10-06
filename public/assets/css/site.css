@@ -290,23 +290,6 @@ figcaption { margin-top: 8px; font-size: 14px; color: var(--ash); }
   box-shadow: 0 40px 120px rgba(0, 0, 0, .55), 0 0 0 1px rgba(236, 231, 221, .1);
   transform-origin: center; will-change: transform, opacity;
 }
-.player-stage { position: relative; }
-/* while a film is still arriving: a thin ring with one warm arc, over the dimmed poster */
-.player-wait {
-  position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; pointer-events: none;
-  background: rgba(20, 21, 24, .32); opacity: 0; transition: opacity .35s var(--ease);
-}
-.player-wait.on { opacity: 1; }
-.player-wait::before {             /* a small pane of dark glass so the ring reads on any picture */
-  content: ""; grid-area: 1 / 1; width: 84px; height: 84px; border-radius: 50%;
-  background: rgba(20, 21, 24, .5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-}
-.player-wait i {
-  grid-area: 1 / 1; width: 48px; height: 48px; border-radius: 50%;
-  border: 2px solid rgba(236, 231, 221, .28); border-top-color: var(--tungsten);
-  animation: turn 1s cubic-bezier(.5, .15, .5, .85) infinite;
-}
-@keyframes turn { to { transform: rotate(360deg); } }
 .player-stage video { width: 100%; height: 100%; object-fit: contain; background: #000; display: block; }
 .player-bar { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; width: 100%; padding: 0 6px; transition: opacity .35s var(--ease); }
 .player-title { font-style: italic; font-size: 18px; }
@@ -470,7 +453,6 @@ main figure img { cursor: zoom-in; }
   .tally, .hero-scroll span { animation: none; }
   .frame img, .frame video { transition: none; }
   .player { transition: none; }
-  .player-wait i { animation: none; }
   .flow-track { animation: none; flex-wrap: wrap; width: auto; row-gap: 26px; padding: 0 var(--gutter); }
   .flow-track li[aria-hidden] { display: none; }
   .flow { -webkit-mask-image: none; mask-image: none; }

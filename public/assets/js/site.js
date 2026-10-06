@@ -144,14 +144,6 @@
         if (film && v.src !== film.url) { v.src = film.url; play(v); } else { msg.hidden = false; }
       });
       stage.textContent = ''; stage.appendChild(v); current = v;
-      // loading mark: only shown if the wait lasts long enough to notice
-      var wait = document.createElement('span'), timer = null;
-      wait.className = 'player-wait'; wait.setAttribute('aria-hidden', 'true'); wait.appendChild(document.createElement('i'));
-      stage.appendChild(wait);
-      function waiting() { if (!timer) timer = setTimeout(function () { wait.classList.add('on'); }, 180); }
-      function arrived() { clearTimeout(timer); timer = null; wait.classList.remove('on'); }
-      ['loadstart', 'waiting', 'stalled'].forEach(function (e) { v.addEventListener(e, waiting); });
-      ['playing', 'canplay', 'error', 'pause'].forEach(function (e) { v.addEventListener(e, arrived); });
     }
     v.pause(); v.setAttribute('data-name', name); v.poster = poster;
     v.src = f.blob || f.url;
