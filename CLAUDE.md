@@ -37,6 +37,8 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
   "Selected films" (6) and "More films" (11). Do not put all films in one grid again; he found 17 at once too long.
 - Player: the clicked card grows into the film (FLIP), the page blurs behind it and the film's poster, blurred,
   lights the backdrop. Prev/next (buttons, arrow keys, swipe) turn between films with a 3D slide.
+- Photos: every `main figure img` opens in a full-screen viewer (dialog #viewer) built like the film player:
+  grows from its place, blurred backdrop lit by the photo, prev/next by buttons, arrow keys or swipe, shrinks back on close.
 - Client logos: "On set for" is a static row; "AI commercials for" is a slow endless drift that pauses on hover/touch.
   Logo heights come from each file's aspect ratio (inline --h) so marks weigh the same; no fixed-width boxes.
 - Top bar has a blurred solid surface. About has an availability line. Phone strips show a partial next frame.
