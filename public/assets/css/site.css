@@ -322,6 +322,10 @@ figcaption { margin-top: 8px; font-size: 14px; color: var(--ash); }
 }
 .player-prev::before { transform: translate(-30%, -50%) rotate(-135deg); }
 
+/* the departing frame during a turn between films or photos */
+.ghost { position: fixed; z-index: 1; margin: 0; pointer-events: none; will-change: transform, opacity; box-shadow: 0 40px 120px rgba(0, 0, 0, .4); }
+.player-scene, .viewer-scene { will-change: transform; }
+
 /* ---------- Photo viewer: same room as the film player ---------- */
 main figure img { cursor: zoom-in; }
 .viewer-scene { margin: 0; max-width: calc(100vw - 48px); gap: 12px; }

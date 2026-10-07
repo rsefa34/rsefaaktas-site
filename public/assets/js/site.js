@@ -40,11 +40,12 @@
   var light = !!conn.saveData || conn.type === 'cellular' || /(^|-)2g|3g/.test(conn.effectiveType || '');
   // Safari gives no connection info. On a phone we then assume a metered line and only stream.
   if (!navigator.connection && !hoverable) light = true;
-  var films = {}, queue = [], active = 0, started = false;
+  var films = {}, queue = [], later = [], active = 0, started = false;
+  var roomy = hoverable && (navigator.deviceMemory === undefined || navigator.deviceMemory >= 4);
   cards.forEach(function (c) {
     var n = c.getAttribute('data-film');
     films[n] = { url: MEDIA + n + '.mp4', blob: null, state: 'idle' };
-    if (!c.hasAttribute('data-later')) queue.push(n);
+    if (!c.hasAttribute('data-later')) queue.push(n); else later.push(n);
   });
   function want(name) {
     var i = queue.indexOf(name);
@@ -55,6 +56,8 @@
   function pump() {
     if (!started || light) return;
     while (active < 2 && queue.length) fetchFilm(queue.shift());
+    // once the selected films are in, a desktop with memory to spare carries on with the rest
+    if (roomy && !queue.length && later.length) { queue = later; later = []; pump(); }
   }
   function fetchFilm(name) {
     var f = films[name];
@@ -74,7 +77,22 @@
     f.warmed = v;
   }
   function near(name) { if (light) warm(name); else want(name); }
-  function start() { if (started) return; started = true; pump(); }
+  function warmPage() {
+    if (light) return;
+    // card previews (0.2-0.6 MB each): one every 120 ms, in page order, so hover and scroll never wait
+    var vids = Array.prototype.slice.call(document.querySelectorAll('.card video, .frame video')), i = 0;
+    (function next() {
+      if (i >= vids.length) return;
+      var v = vids[i++];
+      if (v.preload === 'none' && v.readyState === 0) { v.preload = 'auto'; try { v.load(); } catch (e) {} }
+      setTimeout(next, 120);
+    })();
+    // photos further down the page: fetch and decode them now instead of on arrival
+    Array.prototype.forEach.call(document.querySelectorAll('img[loading="lazy"]'), function (im, k) {
+      setTimeout(function () { im.loading = 'eager'; if (im.decode) im.decode().catch(function () {}); }, 60 * k);
+    });
+  }
+  function start() { if (started) return; started = true; warmPage(); pump(); }
   function whenQuiet(fn) {
     if ('requestIdleCallback' in window) requestIdleCallback(fn, { timeout: 2500 }); else setTimeout(fn, 1200);
   }
@@ -191,6 +209,23 @@
       { duration: 460, easing: EASE, fill: 'forwards' });
     after(a, 460, function () { done(); a.cancel(); });
   }
+  // A still of what is on screen, laid exactly over `el`, so it can leave while the next one arrives.
+  function ghostOf(el, host, paint) {
+    var r = el.getBoundingClientRect(), c = document.createElement('canvas'), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr);
+    c.className = 'ghost';
+    c.style.cssText = 'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;border-radius:' + getComputedStyle(el).borderRadius;
+    try { paint(c.getContext('2d'), c.width, c.height); } catch (e) {}
+    host.appendChild(c);
+    return c;
+  }
+  function turn(ghost, el, dir, done) {
+    var away = 'translateX(' + (-dir * 62) + '%) rotateY(' + (dir * 38) + 'deg) scale(.8)';
+    var from = 'translateX(' + (dir * 62) + '%) rotateY(' + (-dir * 38) + 'deg) scale(.8)';
+    ghost.animate([{ transform: 'none', opacity: 1 }, { transform: away, opacity: 0 }], { duration: 620, easing: EASE, fill: 'forwards' });
+    var inn = el.animate([{ transform: from, opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 620, easing: EASE });
+    after(inn, 620, function () { ghost.remove(); done(); });
+  }
   function step(dir) {
     if (!dlg.open || busy) return;
     index = (index + dir + cards.length) % cards.length;
@@ -198,16 +233,16 @@
     card.closest('li').scrollIntoView({ block: 'nearest', inline: 'center' });   // so closing lands on the right card
     if (!canAnimate) return mount(card);
     busy = true;
-    var out = stage.animate([{ transform: 'none', opacity: 1 },
-      { transform: 'translateX(' + (-dir * 46) + '%) rotateY(' + (dir * 32) + 'deg) scale(.84)', opacity: 0 }],
-      { duration: 300, easing: 'cubic-bezier(.5,0,.8,.4)', fill: 'forwards' });
-    after(out, 300, function () {
-      mount(card);
-      out.cancel();
-      var inn = stage.animate([{ transform: 'translateX(' + (dir * 46) + '%) rotateY(' + (-dir * 32) + 'deg) scale(.84)', opacity: 0 },
-        { transform: 'none', opacity: 1 }], { duration: 520, easing: EASE });
-      after(inn, 520, function () { busy = false; });
+    var old = current;
+    var ghost = ghostOf(stage, dlg, function (g, w, h) {
+      g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
+      if (old && old.videoWidth) {
+        var k = Math.min(w / old.videoWidth, h / old.videoHeight), vw = old.videoWidth * k, vh = old.videoHeight * k;
+        g.drawImage(old, (w - vw) / 2, (h - vh) / 2, vw, vh);
+      }
     });
+    mount(card);
+    turn(ghost, stage, dir, function () { busy = false; });
   }
   document.getElementById('player-close').addEventListener('click', closeFilm);
   document.getElementById('player-prev').addEventListener('click', function () { step(-1); });
@@ -292,15 +327,9 @@
       shots[next].scrollIntoView({ block: 'center', inline: 'center' });   // so closing lands on the right photo
       if (!canAnimate) return show(next);
       vbusy = true;
-      var out = big.animate([{ transform: 'none', opacity: 1 },
-        { transform: 'translateX(' + (-dir * 30) + '%) rotateY(' + (dir * 24) + 'deg) scale(.9)', opacity: 0 }],
-        { duration: 260, easing: 'cubic-bezier(.5,0,.8,.4)', fill: 'forwards' });
-      after(out, 260, function () {
-        show(next); out.cancel();
-        var inn = big.animate([{ transform: 'translateX(' + (dir * 30) + '%) rotateY(' + (-dir * 24) + 'deg) scale(.9)', opacity: 0 },
-          { transform: 'none', opacity: 1 }], { duration: 460, easing: EASE });
-        after(inn, 460, function () { vbusy = false; });
-      });
+      var ghost = ghostOf(big, vdlg, function (g, w, h) { g.drawImage(big, 0, 0, w, h); });
+      show(next);
+      turn(ghost, big, dir, function () { vbusy = false; });
     }
     shots.forEach(function (el, i) {
       el.tabIndex = 0; el.setAttribute('role', 'button');
