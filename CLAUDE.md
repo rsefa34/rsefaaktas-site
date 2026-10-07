@@ -27,9 +27,6 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
   Motion that exists: opening sequence, the two frames opening once, the film rails drifting, rail cards turning slightly (mouse devices only),
   the logo drift, card-to-player growth and the 3D turn between films. Motion answers an action or drifts slowly;
   do NOT add scroll-triggered fade/slide reveals per section. If more is asked, weigh it against the "calm, unhurried" brief.
-- Line figures ("stick man" doodles, Sefa's idea 2026-10-07): a TRIAL of two inline SVGs on the top edges of the two frames
-  (.doodle-cam films, .doodle-ai sits with a spark). Thin bone line, tiny idle loops. Awaiting his verdict before adding
-  more; if kept, keep them few and small (audience is employers, tone is calm and cinematic).
 - prefers-reduced-motion is supported everywhere: no opening animation, no card turn, logos become a static wrapped row,
   the player opens/steps/closes without animation, previews do not autoplay. Keep this working when adding motion.
 - iPhone Safari safeguards (reasoned, not verified on a device — no WebKit in the test environment):
