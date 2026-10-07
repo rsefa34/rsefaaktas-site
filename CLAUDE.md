@@ -24,7 +24,7 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
 - public/assets/css/site.css holds the tokens (smoke, well, bone, ash, tungsten, tally). Typeface: Albert Sans.
 - MOTION POLICY (current, set 2026-10-07 from Sefa's feedback; it replaces the first draft's "opening only" rule):
   Sefa wants fluid After-Effects / iOS-like transitions and rounded corners (token --r), no flat empty backdrops.
-  Motion that exists: opening sequence, the two frames opening once, rail cards turning slightly (mouse devices only),
+  Motion that exists: opening sequence, the two frames opening once, the film rails drifting, rail cards turning slightly (mouse devices only),
   the logo drift, card-to-player growth and the 3D turn between films. Motion answers an action or drifts slowly;
   do NOT add scroll-triggered fade/slide reveals per section. If more is asked, weigh it against the "calm, unhurried" brief.
 - prefers-reduced-motion is supported everywhere: no opening animation, no card turn, logos become a static wrapped row,
@@ -33,7 +33,10 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
   one <video> element is reused for the whole player session (sound may only start inside the tap);
   a cached blob that fails falls back to the direct URL; :hover rules that pause/scale are inside @media (hover: hover);
   Safari has no navigator.connection, so phones without it are treated as metered (stream only, no background download).
-- "In AI" is two horizontal rails (scroll-snap, arrow buttons, cards turn slightly in 3D as they travel):
+- "In AI" is two horizontal rails that drift on their own like the logo strip (asked by Sefa 2026-10-07): the cards are
+  cloned in site.js so the row never ends; it is still a native scroller (swipe, wheel, arrows), and rests under the
+  pointer or a finger, while a dialog is open and off screen. No scroll-snap while drifting. Reduced motion: no clones,
+  no drift, plain row with arrows. Cards turn slightly in 3D as they travel (mouse devices):
   "Selected films" (7) and "More films" (14). Do not put all films in one grid again; he found 17 at once too long.
 - Player: the clicked card grows into the film (FLIP), the page blurs behind it and the film's poster, blurred,
   lights the backdrop. Prev/next (buttons, arrow keys, swipe) turn between films with a 3D slide:

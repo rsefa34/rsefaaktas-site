@@ -227,6 +227,7 @@ figcaption { margin-top: 8px; font-size: 14px; color: var(--ash); }
 }
 @media (hover: hover) { .rail-track { perspective: 1400px; } }
 .rail-track::-webkit-scrollbar { display: none; }
+.rail-track.flowing { scroll-snap-type: none; }   /* drifting on its own: see site.js */
 .rail-track li { flex: none; scroll-snap-align: start; width: var(--card-w); transform-origin: 50% 60%; will-change: transform; }
 .rail-lead { --card-w: clamp(210px, 21.5vw, 320px); }
 .rail-more { --card-w: clamp(150px, 13.6vw, 200px); }

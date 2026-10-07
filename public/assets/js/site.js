@@ -99,33 +99,118 @@
   if (document.readyState === 'complete') whenQuiet(start);
   else window.addEventListener('load', function () { whenQuiet(start); });
 
-  /* ---------- Rails: arrows, and a slight turn of the cards as they travel ---------- */
-  Array.prototype.forEach.call(document.querySelectorAll('[data-rail]'), function (rail) {
+  /* ---------- Rails: the films drift by on their own, like the logo strip ----------
+     The row is repeated so it never ends. It is still an ordinary scroller: a swipe, the wheel or the
+     arrows move it, and the drift picks up again a moment later. It rests under the pointer or a finger,
+     while a film or photo is open, and when it is off screen. With reduced motion nothing drifts and the
+     rail stays a plain row with arrows. */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-rail]'), function (rail, railNo) {
     var track = rail.querySelector('.rail-track');
     var btns = rail.querySelectorAll('.rail-nav button');
-    var items = Array.prototype.slice.call(track.children);
-    var ticking = false;
-    function update() {
-      ticking = false;
-      var max = track.scrollWidth - track.clientWidth - 2;
-      if (btns.length) { btns[0].disabled = track.scrollLeft <= 2; btns[1].disabled = track.scrollLeft >= max; }
+    var originals = Array.prototype.slice.call(track.children);
+    var flowing = !reduce && 'requestAnimationFrame' in window && originals.length > 2;
+    var items = originals, half = 0, pos = 0, lastSet = 0, vel = 0, push = 0, userAt = 0;
+    var held = false, over = false, seen = true, last = 0, keyAt = -1e9;
+
+    if (flowing) {
+      // enough copies that one set is always wider than any screen it will meet
+      var setW = originals.length * (originals[0].offsetWidth + 16);
+      var copies = Math.max(1, Math.ceil(Math.max(window.innerWidth, screen.width || 0) / Math.max(setW, 1)));
+      for (var n = 0; n < copies; n++) originals.forEach(function (li) {
+        var twin = li.cloneNode(true), card = li.querySelector('.card'), tc = twin.querySelector('.card');
+        twin.setAttribute('aria-hidden', 'true');
+        if (card && tc) {
+          tc.tabIndex = -1; tc.removeAttribute('data-film');
+          (card._twins = card._twins || []).push(tc);
+          tc.addEventListener('click', function () { card.click(); });
+          tc.addEventListener('pointerenter', function () { near(card.getAttribute('data-film')); });
+        }
+        track.appendChild(twin);
+      });
+      items = Array.prototype.slice.call(track.children);
+      track.classList.add('flowing');
+    }
+    function measure() { if (flowing) half = items[originals.length].offsetLeft - items[0].offsetLeft; }
+    function tilt() {
       if (reduce || !hoverable) return;
-      var box = track.getBoundingClientRect(), mid = box.left + box.width / 2, half = box.width / 2;
+      var box = track.getBoundingClientRect(), mid = box.left + box.width / 2, halfW = box.width / 2;
       items.forEach(function (li) {
         var r = li.getBoundingClientRect();
-        var d = Math.max(-1.2, Math.min(1.2, (r.left + r.width / 2 - mid) / half));
+        if (r.right < box.left - 200 || r.left > box.right + 200) return;
+        var d = Math.max(-1.2, Math.min(1.2, (r.left + r.width / 2 - mid) / halfW));
         li.style.transform = 'rotateY(' + (-d * 7).toFixed(2) + 'deg) scale(' + (1 - Math.abs(d) * 0.035).toFixed(3) + ')';
       });
     }
+    var ticking = false;
+    function update() {
+      ticking = false;
+      if (!flowing && btns.length) {
+        var max = track.scrollWidth - track.clientWidth - 2;
+        btns[0].disabled = track.scrollLeft <= 2; btns[1].disabled = track.scrollLeft >= max;
+      }
+      tilt();
+    }
     function ask() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
-    track.addEventListener('scroll', ask, { passive: true });
-    window.addEventListener('resize', ask);
+    track.addEventListener('scroll', function () {
+      // a scroll we did not make ourselves is the visitor's: follow it and wait
+      if (flowing && Math.abs(track.scrollLeft - lastSet) > 2) { userAt = performance.now(); pos = track.scrollLeft; push = 0; }
+      ask();
+    }, { passive: true });
+    window.addEventListener('resize', function () { measure(); ask(); });
     Array.prototype.forEach.call(btns, function (b) {
       b.addEventListener('click', function () {
-        track.scrollBy({ left: Number(b.getAttribute('data-dir')) * track.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth' });
+        var by = Number(b.getAttribute('data-dir')) * track.clientWidth * 0.8;
+        if (flowing) { push += by; userAt = 0; }
+        else track.scrollBy({ left: by, behavior: reduce ? 'auto' : 'smooth' });
       });
     });
-    update();
+    measure(); update();
+    if (!flowing) return;
+
+    track.addEventListener('touchstart', function () { held = true; }, { passive: true });
+    ['touchend', 'touchcancel'].forEach(function (e) {
+      track.addEventListener(e, function () { held = false; userAt = performance.now(); }, { passive: true });
+    });
+    track.addEventListener('keydown', function () { keyAt = performance.now(); });
+    track.addEventListener('focusin', function (e) { if (e.target.matches(':focus-visible')) keyAt = performance.now(); });
+    if (hoverable) {
+      track.addEventListener('mouseenter', function () { over = true; });
+      track.addEventListener('mouseleave', function () { over = false; });
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { seen = es[es.length - 1].isIntersecting; }, { rootMargin: '100px' }).observe(track);
+    }
+    var speed = (hoverable ? 26 : 20) - railNo * 5;      // px per second; the second rail a touch slower
+    function wrap(centre) {
+      var max = track.scrollWidth - track.clientWidth;
+      if (half <= 0 || max < half) return;
+      if (centre) {               // after the visitor let go: sit where there is room to both sides
+        while (pos - half >= 0 && Math.abs(pos - half - max / 2) < Math.abs(pos - max / 2)) pos -= half;
+        while (pos + half <= max && Math.abs(pos + half - max / 2) < Math.abs(pos - max / 2)) pos += half;
+      }
+      while (pos > max - 2) pos -= half;
+      while (pos < 0) pos += half;
+    }
+    var wasUser = false;
+    function frame(now) {
+      requestAnimationFrame(frame);
+      var dt = Math.min(64, now - (last || now)); last = now;
+      if (!seen || document.hidden) return;
+      if (!half) measure();
+      var user = held || now - userAt < 1600;
+      if (user) { wasUser = true; vel = 0; pos = track.scrollLeft; return; }   // leave native scrolling alone
+      var tabbing = now - keyAt < 6000 && track.contains(document.activeElement);   // someone is tabbing through the cards
+      var rest = over || tabbing || !!document.querySelector('dialog[open]');
+      vel += ((rest ? 0 : speed) - vel) * Math.min(1, dt / 420);               // eases in and out of the drift
+      var by = vel * dt / 1000;
+      if (Math.abs(push) > 0.5) { var p = push * Math.min(1, dt / 160); push -= p; by += p; } else push = 0;
+      if (!wasUser && Math.abs(by) < 0.01) return;
+      pos += by; wrap(wasUser); wasUser = false;
+      track.scrollLeft = pos; lastSet = track.scrollLeft;
+      if (Math.abs(lastSet - pos) > 1.5) pos = lastSet;
+      tilt();
+    }
+    requestAnimationFrame(frame);
   });
 
   /* ---------- Logo flow: holds still under a finger ---------- */
@@ -169,7 +254,16 @@
     // keep the neighbours ready so stepping through is instant
     [index - 1, index + 1].forEach(function (i) { var c = cards[(i + cards.length) % cards.length]; near(c.getAttribute('data-film')); });
   }
+  function faceOf(card) {             // a rail repeats its cards: take the copy nearest the middle of the screen
+    var best = card, score = Infinity;
+    [card].concat(card._twins || []).forEach(function (c) {
+      var r = c.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - innerWidth / 2);
+      if (r.width && d < score) { score = d; best = c; }
+    });
+    return best;
+  }
   function fromCard(card) {           // where the card sits, relative to the stage's resting place
+    card = faceOf(card);
     var c = card.getBoundingClientRect(), s = stage.getBoundingClientRect();
     if (!c.width || c.bottom < 0 || c.top > innerHeight || c.right < 0 || c.left > innerWidth) return null;
     var k = c.width / s.width;
@@ -230,7 +324,7 @@
     if (!dlg.open || busy) return;
     index = (index + dir + cards.length) % cards.length;
     var card = cards[index];
-    card.closest('li').scrollIntoView({ block: 'nearest', inline: 'center' });   // so closing lands on the right card
+    faceOf(card).closest('li').scrollIntoView({ block: 'nearest', inline: 'center' });   // so closing lands on the right card
     if (!canAnimate) return mount(card);
     busy = true;
     var old = current;
