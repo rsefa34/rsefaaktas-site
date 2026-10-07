@@ -146,6 +146,31 @@ em { font-style: italic; }
 .frame { clip-path: inset(0 0 100% 0 round var(--r)); transition: clip-path 1.3s var(--ease); }
 .frame.in { clip-path: inset(0 round var(--r)); }
 .frame-tall { transition-delay: .18s; }
+
+/* Line figures on the frame edges (a trial, 2026-10-07). They step in after the frames have opened. */
+.two-frames { position: relative; }
+.doodle {
+  position: absolute; width: clamp(40px, 4.6vw, 64px); height: auto; overflow: visible; pointer-events: none;
+  fill: none; stroke: var(--bone); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .55));
+  opacity: 0; transform: translateY(8px); transition: opacity .7s var(--ease) 1.3s, transform .9s var(--ease) 1.3s;
+}
+.frame.in ~ .doodle { opacity: .9; transform: none; }
+.doodle-cam { left: 7%; bottom: 100%; }                         /* stands on the real frame */
+.doodle-ai { right: 3.5%; bottom: 100%; margin-bottom: -37.5%; margin-bottom: calc(clamp(40px, 4.6vw, 64px) * -0.375); }  /* sits on the artificial one */
+.doodle-rec { fill: var(--tally); stroke: none; animation: rec 1.6s steps(1) infinite; }
+.doodle-spark { stroke: var(--tungsten); stroke-width: 1.6; transform-box: fill-box; transform-origin: center; animation: spark 2.8s var(--ease) infinite; }
+.doodle-pan { transform-box: fill-box; transform-origin: 50% 100%; animation: pan 7s ease-in-out infinite; }
+.doodle-leg { transform-box: fill-box; transform-origin: 50% 0; animation: swing 3.2s ease-in-out infinite; }
+.doodle-leg-b { animation-delay: -1.6s; }
+@keyframes rec { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes spark { 0%, 100% { transform: scale(.5) rotate(0deg); opacity: .35; } 50% { transform: scale(1) rotate(45deg); opacity: 1; } }
+@keyframes pan { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(5deg); } }
+@keyframes swing { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .doodle { transition: none; }
+  .doodle-rec, .doodle-spark, .doodle-pan, .doodle-leg { animation: none; }
+}
 .two-captions {
   display: flex; gap: clamp(12px, 2.4vw, 32px); margin-top: 14px; max-width: 1400px;
   font-size: 14px; color: var(--ash);
