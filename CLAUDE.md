@@ -39,6 +39,9 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
   pointer or a finger, while a dialog is open and off screen. No scroll-snap while drifting. Reduced motion: no clones,
   no drift, plain row with arrows. Cards turn slightly in 3D as they travel (mouse devices):
   "Selected films" (7) and "More films" (14). Do not put all films in one grid again; he found 17 at once too long.
+- Rail card text: title on ONE line (the four named Tabloplus films show "Tabloplus" as title and the film name as the
+  description; the full name stays in data-title for the player), then a two-line slot for the description so all
+  cards in a rail end level. Descriptions are deliberately larger/brighter than a caption so similar posters can be told apart.
 - Player: the clicked card grows into the film (FLIP), the page blurs behind it and the film's poster, blurred,
   lights the backdrop. Prev/next (buttons, arrow keys, swipe) turn between films with a 3D slide:
   the outgoing film (or photo) leaves as a canvas still (`ghostOf` / `turn` in site.js) while the next one arrives at the same time.
