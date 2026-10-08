@@ -59,7 +59,8 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
   site.js), phones create no hidden "warm" players and desktops keep at most two, rail clones are capped at 3 copies,
   and the player retries once after freeing all previews before showing its message. Keep it this way.
 - Full films (1080x1920 H.264, ~4-12 MB, with sound) are on Cloudflare R2, bucket `rsefaaktas-media`,
-  public URL https://pub-76ee4d9ab6aa4a3988c80d9618f887d1.r2.dev/<name>.mp4 (same names as the previews).
+  served at https://media.rsefaaktas.com/<name>.mp4 (custom domain on the bucket, connected 2026-10-09; same names as the previews).
+  The old r2.dev address is rate-limited and dropped connections from Sefa's network: do not go back to it.
   The base URL is the MEDIA constant at the top of public/assets/js/site.js.
 - Sefa's rule: do NOT wait for a click to download. After the page has loaded, the selected films are fetched in the
   background (two at a time); "More films" join when their rail is approached, and on desktops (mouse, >= 4 GB memory)

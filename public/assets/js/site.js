@@ -1,7 +1,7 @@
 // rsefaaktas.com — behaviours. The page reads fine without this file.
 (function () {
-  // Full films live on Cloudflare R2. Change this one line when media.rsefaaktas.com is connected.
-  var MEDIA = 'https://pub-76ee4d9ab6aa4a3988c80d9618f887d1.r2.dev/';
+  // Full films live on Cloudflare R2, served through the bucket's own domain (not the rate-limited r2.dev address).
+  var MEDIA = 'https://media.rsefaaktas.com/';
   var EASE = 'cubic-bezier(.22,.8,.2,1)';
 
   var root = document.documentElement;
