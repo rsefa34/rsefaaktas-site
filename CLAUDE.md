@@ -74,6 +74,7 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
 
 ## Stack decisions
 - Plain static HTML/CSS/JS, no build step (keeps it editable by hand).
+- index.html loads site.css and site.js with ?v=YYYYMMDD. Bump it on every CSS/JS change, or visitors keep the cached old file.
 - Hosting: Cloudflare Workers static assets (wrangler.jsonc, serves ./public), Git-connected: auto-deploy on push to main.
 - Only files inside public/ are published. Notes (README, CLAUDE.md) stay outside it.
 - Videos: NOT committed to the repo. Full videos go to Cloudflare R2 (public bucket); only small posters/thumbnails live in public/assets/img.
