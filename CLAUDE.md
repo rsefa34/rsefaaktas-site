@@ -53,6 +53,11 @@ The site is being rebuilt from scratch in this repo, step by step with Sefa. Tal
   Logo heights come from each file's aspect ratio (inline --h) so marks weigh the same; no fixed-width boxes.
 - Top bar has a blurred solid surface. About has an availability line. Phone strips show a partial next frame.
 - AI cards use silent 6-second previews in public/assets/video (480x854, small).
+- DECODER BUDGET (bug found 2026-10-09: films showed a broken play icon): every loaded <video> holds a decoder and
+  browsers (iPhone above all) run out. So previews are never preloaded as players (warmPage only fills the HTTP cache
+  with fetch), a preview gives its source back when it leaves the screen or a film opens (release/attach/preview in
+  site.js), phones create no hidden "warm" players and desktops keep at most two, rail clones are capped at 3 copies,
+  and the player retries once after freeing all previews before showing its message. Keep it this way.
 - Full films (1080x1920 H.264, ~4-12 MB, with sound) are on Cloudflare R2, bucket `rsefaaktas-media`,
   public URL https://pub-76ee4d9ab6aa4a3988c80d9618f887d1.r2.dev/<name>.mp4 (same names as the previews).
   The base URL is the MEDIA constant at the top of public/assets/js/site.js.

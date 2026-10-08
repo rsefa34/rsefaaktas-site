@@ -29,6 +29,19 @@
     anim.onfinish = go; anim.oncancel = go; setTimeout(go, ms + 80);
   }
   function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  // Card previews give their decoder back when they leave the screen or a film opens, and take it again
+  // when they are needed. (A browser has only so many; with all of them busy a film shows a broken icon.)
+  function release(v) {
+    var s = v.querySelector('source');
+    if (!s || !s.getAttribute('src') || !v._used) return;
+    v.pause(); s.setAttribute('data-src', s.getAttribute('src')); s.removeAttribute('src'); v.load(); v._used = false;
+  }
+  function attach(v) {
+    var s = v.querySelector('source');
+    if (s && !s.getAttribute('src') && s.getAttribute('data-src')) { s.setAttribute('src', s.getAttribute('data-src')); v.load(); }
+  }
+  function preview(v) { attach(v); v._used = true; play(v); }
+  function releaseAll() { Array.prototype.forEach.call(document.querySelectorAll('.card video, .frame video'), release); }
   var cards = Array.prototype.slice.call(document.querySelectorAll('.card[data-film]'));
 
   /* ---------- Full films, fetched quietly in the background ----------
@@ -69,23 +82,34 @@
       .catch(function () { f.state = 'stream'; warm(name); })
       .then(function () { active--; pump(); });
   }
+  // Streaming fallback (no CORS): a hidden player buffers the film. Every <video> holds a decoder and
+  // phones run out of them quickly, so phones get none and desktops keep at most two.
+  var warmed = [];
   function warm(name) {
     var f = films[name];
-    if (f.warmed) return;
+    if (light || f.warmed) return;
     var v = document.createElement('video');
-    v.preload = light ? 'metadata' : 'auto'; v.muted = true; v.src = f.url;
-    f.warmed = v;
+    v.preload = 'auto'; v.muted = true; v.src = f.url;
+    f.warmed = v; warmed.push(name);
+    while (warmed.length > 2) {
+      var old = films[warmed.shift()];
+      if (old.warmed) { old.warmed.removeAttribute('src'); old.warmed.load(); old.warmed = null; }
+    }
   }
   function near(name) { if (light) warm(name); else want(name); }
   function warmPage() {
     if (light) return;
-    // card previews (0.2-0.6 MB each): one every 120 ms, in page order, so hover and scroll never wait
-    var vids = Array.prototype.slice.call(document.querySelectorAll('.card video, .frame video')), i = 0;
+    // card previews (0.2-0.6 MB each) go into the browser cache, one every 150 ms, so hover and scroll never
+    // wait. Plain downloads, not players: a page full of loaded <video> elements runs out of decoders.
+    var seen = {}, urls = [];
+    Array.prototype.forEach.call(document.querySelectorAll('.card video source, .frame video source'), function (s) {
+      var u = s.getAttribute('src') || s.getAttribute('data-src');
+      if (u && !seen[u]) { seen[u] = true; urls.push(u); }
+    });
     (function next() {
-      if (i >= vids.length) return;
-      var v = vids[i++];
-      if (v.preload === 'none' && v.readyState === 0) { v.preload = 'auto'; try { v.load(); } catch (e) {} }
-      setTimeout(next, 120);
+      if (!urls.length) return;
+      fetch(urls.shift()).catch(function () {});
+      setTimeout(next, 150);
     })();
     // photos further down the page: fetch and decode them now instead of on arrival
     Array.prototype.forEach.call(document.querySelectorAll('img[loading="lazy"]'), function (im, k) {
@@ -114,8 +138,8 @@
 
     if (flowing) {
       // enough copies that one set is always wider than any screen it will meet
-      var setW = originals.length * (originals[0].offsetWidth + 16);
-      var copies = Math.max(1, Math.ceil(Math.max(window.innerWidth, screen.width || 0) / Math.max(setW, 1)));
+      var setW = originals.length * ((originals[0].offsetWidth || 200) + 16);
+      var copies = Math.min(3, Math.max(1, Math.ceil(Math.max(window.innerWidth, screen.width || 0, 1024) / setW)));
       for (var n = 0; n < copies; n++) originals.forEach(function (li) {
         var twin = li.cloneNode(true), card = li.querySelector('.card'), tc = twin.querySelector('.card');
         twin.setAttribute('aria-hidden', 'true');
@@ -244,11 +268,13 @@
       v.addEventListener('error', function () {
         // a cached copy that will not play falls back to streaming the file directly
         var film = films[v.getAttribute('data-name')];
-        if (film && v.src !== film.url) { v.src = film.url; play(v); } else { msg.hidden = false; }
+        if (film && v.src !== film.url) { v.src = film.url; play(v); }
+        else if (film && !v._retried) { v._retried = true; releaseAll(); v.src = film.url; v.load(); play(v); }
+        else { msg.hidden = false; }
       });
       stage.textContent = ''; stage.appendChild(v); current = v;
     }
-    v.pause(); v.setAttribute('data-name', name); v.poster = poster;
+    v.pause(); v.setAttribute('data-name', name); v.poster = poster; v._retried = false;
     v.src = f.blob || f.url;
     play(v);
     // keep the neighbours ready so stepping through is instant
@@ -273,7 +299,7 @@
   function openFilm(card) {
     if (dlg.open) return;
     index = cards.indexOf(card);
-    cards.forEach(function (c) { c.querySelector('video').pause(); });
+    releaseAll();
     if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
     mount(card);
     var from = canAnimate && fromCard(card);
@@ -477,19 +503,31 @@
   // Silent previews play while on screen (touch) or under the pointer (mouse).
   var inView = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
-      if (e.isIntersecting && !dlg.open) play(e.target); else e.target.pause();
+      if (e.isIntersecting && !document.querySelector('dialog[open]')) preview(e.target); else e.target.pause();
     });
   }, { threshold: 0.6 });
+  // off screen (or scrolled out of its rail): give the decoder back
+  var away = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (!e.isIntersecting) release(e.target); });
+  });
 
-  document.querySelectorAll('.frame video, .card video').forEach(function (v) {
+  var vids = Array.prototype.slice.call(document.querySelectorAll('.frame video, .card video'));
+  vids.forEach(function (v) {
+    away.observe(v);
     if (v.hasAttribute('data-autoplay') || !hoverable) {
       inView.observe(v);
     } else {
       var card = v.closest('.card');
-      card.addEventListener('mouseenter', function () { play(v); });
-      card.addEventListener('focus', function () { play(v); });
+      card.addEventListener('mouseenter', function () { preview(v); });
+      card.addEventListener('focus', function () { preview(v); });
       card.addEventListener('mouseleave', function () { v.pause(); });
       card.addEventListener('blur', function () { v.pause(); });
     }
+  });
+  // after a film or photo closes, the previews on screen pick up again
+  Array.prototype.forEach.call(document.querySelectorAll('dialog'), function (d) {
+    d.addEventListener('close', function () {
+      vids.forEach(function (v) { if (v.hasAttribute('data-autoplay') || !hoverable) { inView.unobserve(v); inView.observe(v); } });
+    });
   });
 })();
