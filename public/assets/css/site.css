@@ -184,11 +184,19 @@ figcaption { margin-top: 8px; font-size: 14px; color: var(--ash); }
 
 .strip {
   grid-column: 1 / -1;
-  display: flex; gap: 14px; overflow-x: auto;
-  margin: 8px calc(var(--gutter) * -1) 0; padding: 0 var(--gutter) 14px;
+  display: flex; gap: 14px; overflow-x: auto; overflow-y: hidden;
+  margin: -6px calc(var(--gutter) * -1) 0; padding: 14px var(--gutter) 16px;
   scroll-snap-type: x proximity; scroll-padding-left: var(--gutter); scrollbar-width: thin; scrollbar-color: var(--line) transparent;
 }
-.strip figure { flex: none; scroll-snap-align: start; }
+.strip figure { flex: none; scroll-snap-align: start; transform-origin: 50% 45%; will-change: transform; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  main :not(.strip) > figure > img { transition: transform .8s var(--ease), box-shadow .8s var(--ease); }
+  main :not(.strip) > figure > img:hover { transform: scale(1.02); box-shadow: 0 28px 70px rgba(0, 0, 0, .45); }
+}
+.strip.flowing { scroll-snap-type: none; scrollbar-width: none; }
+.strip.flowing::-webkit-scrollbar { display: none; }
+/* the swell under the pointer (--m, 0..1, set by site.js) also lifts the photo off the page */
+.strip figure img, .rail-track .card { box-shadow: 0 calc(var(--m, 0) * 26px) calc(var(--m, 0) * 60px) rgba(0, 0, 0, calc(var(--m, 0) * .5)); }
 .strip img { height: clamp(170px, 22vw, 290px); width: auto; }
 
 .trio {
@@ -221,8 +229,8 @@ figcaption { margin-top: 8px; font-size: 14px; color: var(--ash); }
 .rail-nav button:hover { border-color: var(--bone); }
 .rail-nav button:disabled { opacity: .3; cursor: default; }
 .rail-track {
-  display: flex; gap: clamp(12px, 1.6vw, 22px); overflow-x: auto;
-  padding: 6px var(--gutter) 10px; scroll-padding-left: var(--gutter);
+  display: flex; gap: clamp(12px, 1.6vw, 22px); overflow-x: auto; overflow-y: hidden;
+  padding: 16px var(--gutter) 12px; margin-top: -10px; scroll-padding-left: var(--gutter);
   scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
 }
 @media (hover: hover) { .rail-track { perspective: 1400px; } }
@@ -274,7 +282,7 @@ figcaption { margin-top: 8px; font-size: 14px; color: var(--ash); }
   background: rgba(22, 23, 26, .55); backdrop-filter: blur(26px) saturate(1.25); -webkit-backdrop-filter: blur(26px) saturate(1.25);
   display: none; align-items: center; justify-content: center; gap: clamp(8px, 2vw, 28px);
   perspective: 1600px;
-  opacity: 0; transition: opacity .5s var(--ease);
+  opacity: 0; transition: opacity .6s cubic-bezier(.32,.72,0,1);
 }
 .player[open] { display: flex; }
 .player.lit { opacity: 1; }

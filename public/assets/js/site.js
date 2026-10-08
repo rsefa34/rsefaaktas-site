@@ -3,6 +3,7 @@
   // Full films live on Cloudflare R2, served through the bucket's own domain (not the rate-limited r2.dev address).
   var MEDIA = 'https://media.rsefaaktas.com/';
   var EASE = 'cubic-bezier(.22,.8,.2,1)';
+  var GLIDE = 'cubic-bezier(.32,.72,0,1)';   // iOS-like: quick start, long soft landing (opening and closing)
 
   var root = document.documentElement;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -29,6 +30,15 @@
     anim.onfinish = go; anim.oncancel = go; setTimeout(go, ms + 80);
   }
   function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  // Rails and the photo strip repeat their items; of an item and its copies, take the one nearest the middle of the screen.
+  function nearestCopy(el) {
+    var best = el, score = Infinity;
+    [el].concat(el._twins || []).forEach(function (c) {
+      var r = c.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - innerWidth / 2) + (r.bottom < 0 || r.top > innerHeight ? 1e5 : 0);
+      if (r.width && d < score) { score = d; best = c; }
+    });
+    return best;
+  }
   // Card previews give their decoder back when they leave the screen or a film opens, and take it again
   // when they are needed. (A browser has only so many; with all of them busy a film shows a broken icon.)
   function release(v) {
@@ -128,8 +138,9 @@
      arrows move it, and the drift picks up again a moment later. It rests under the pointer or a finger,
      while a film or photo is open, and when it is off screen. With reduced motion nothing drifts and the
      rail stays a plain row with arrows. */
-  Array.prototype.forEach.call(document.querySelectorAll('[data-rail]'), function (rail, railNo) {
-    var track = rail.querySelector('.rail-track');
+  Array.prototype.forEach.call(document.querySelectorAll('[data-rail], .strip'), function (rail) {
+    var isStrip = rail.classList.contains('strip');
+    var track = isStrip ? rail : rail.querySelector('.rail-track');
     var btns = rail.querySelectorAll('.rail-nav button');
     var originals = Array.prototype.slice.call(track.children);
     var flowing = !reduce && 'requestAnimationFrame' in window && originals.length > 2;
@@ -149,21 +160,40 @@
           tc.addEventListener('click', function () { card.click(); });
           tc.addEventListener('pointerenter', function () { near(card.getAttribute('data-film')); });
         }
+        var img = isStrip && li.querySelector('img'), ti = img && twin.querySelector('img');
+        if (img && ti) {                // a copied photo opens the original in the viewer
+          ti.setAttribute('data-twin', ''); ti.loading = 'eager';
+          (img._twins = img._twins || []).push(ti);
+          ti.addEventListener('click', function () { img.click(); });
+        }
         track.appendChild(twin);
       });
       items = Array.prototype.slice.call(track.children);
       track.classList.add('flowing');
     }
     function measure() { if (flowing) half = items[originals.length].offsetLeft - items[0].offsetLeft; }
-    function tilt() {
+    // Mouse only: cards turn slightly as they travel (rails), and whatever is under the pointer swells a little,
+    // its neighbours less, like the Mac Dock. Each item eases toward its size, so nothing jumps.
+    var mx = null, settling = 0;
+    function tilt(dt) {
       if (reduce || !hoverable) return;
       var box = track.getBoundingClientRect(), mid = box.left + box.width / 2, halfW = box.width / 2;
+      var k = Math.min(1, (dt || 16) / 140), moving = 0;
       items.forEach(function (li) {
         var r = li.getBoundingClientRect();
-        if (r.right < box.left - 200 || r.left > box.right + 200) return;
-        var d = Math.max(-1.2, Math.min(1.2, (r.left + r.width / 2 - mid) / halfW));
-        li.style.transform = 'rotateY(' + (-d * 7).toFixed(2) + 'deg) scale(' + (1 - Math.abs(d) * 0.035).toFixed(3) + ')';
+        if (r.right < box.left - 200 || r.left > box.right + 200) { li._m = 0; return; }
+        var c = r.left + r.width / 2;
+        var want = mx === null ? 0 : Math.max(0, 1 - Math.abs(c - mx) / (r.width * 1.25));
+        want = want * want * (3 - 2 * want);
+        li._m = (li._m || 0) + (want - (li._m || 0)) * k;
+        if (Math.abs(want - li._m) > 0.002) moving = 1;
+        var grow = 1 + li._m * Math.min(isStrip ? 0.045 : 0.035, 20 / r.width);   // never wider than the gap allows
+        li.style.setProperty('--m', li._m.toFixed(3));
+        if (isStrip) { li.style.transform = 'scale(' + grow.toFixed(4) + ')'; return; }
+        var d = Math.max(-1.2, Math.min(1.2, (c - mid) / halfW));
+        li.style.transform = 'rotateY(' + (-d * 7).toFixed(2) + 'deg) scale(' + ((1 - Math.abs(d) * 0.035) * grow).toFixed(4) + ')';
       });
+      settling = moving;
     }
     var ticking = false;
     function update() {
@@ -199,12 +229,14 @@
     track.addEventListener('focusin', function (e) { if (e.target.matches(':focus-visible')) keyAt = performance.now(); });
     if (hoverable) {
       track.addEventListener('mouseenter', function () { over = true; });
-      track.addEventListener('mouseleave', function () { over = false; });
+      track.addEventListener('mouseleave', function () { over = false; mx = null; settling = 1; });
+      track.addEventListener('mousemove', function (e) { mx = e.clientX; settling = 1; }, { passive: true });
     }
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (es) { seen = es[es.length - 1].isIntersecting; }, { rootMargin: '100px' }).observe(track);
     }
-    var speed = (hoverable ? 26 : 20) - railNo * 5;      // px per second; the second rail a touch slower
+    // px per second; the photo strip and the second rail a touch slower than the first
+    var speed = (hoverable ? 26 : 20) * (isStrip ? 0.85 : rail.classList.contains('rail-more') ? 0.8 : 1);
     function wrap(centre) {
       var max = track.scrollWidth - track.clientWidth;
       if (half <= 0 || max < half) return;
@@ -221,6 +253,7 @@
       var dt = Math.min(64, now - (last || now)); last = now;
       if (!seen || document.hidden) return;
       if (!half) measure();
+      if (over || settling) tilt(dt);                                          // the Dock swell follows the pointer
       var user = held || now - userAt < 1600;
       if (user) { wasUser = true; vel = 0; pos = track.scrollLeft; return; }   // leave native scrolling alone
       var tabbing = now - keyAt < 6000 && track.contains(document.activeElement);   // someone is tabbing through the cards
@@ -232,7 +265,7 @@
       pos += by; wrap(wasUser); wasUser = false;
       track.scrollLeft = pos; lastSet = track.scrollLeft;
       if (Math.abs(lastSet - pos) > 1.5) pos = lastSet;
-      tilt();
+      if (!over && !settling) tilt(dt);
     }
     requestAnimationFrame(frame);
   });
@@ -280,16 +313,8 @@
     // keep the neighbours ready so stepping through is instant
     [index - 1, index + 1].forEach(function (i) { var c = cards[(i + cards.length) % cards.length]; near(c.getAttribute('data-film')); });
   }
-  function faceOf(card) {             // a rail repeats its cards: take the copy nearest the middle of the screen
-    var best = card, score = Infinity;
-    [card].concat(card._twins || []).forEach(function (c) {
-      var r = c.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - innerWidth / 2);
-      if (r.width && d < score) { score = d; best = c; }
-    });
-    return best;
-  }
   function fromCard(card) {           // where the card sits, relative to the stage's resting place
-    card = faceOf(card);
+    card = nearestCopy(card);
     var c = card.getBoundingClientRect(), s = stage.getBoundingClientRect();
     if (!c.width || c.bottom < 0 || c.top > innerHeight || c.right < 0 || c.left > innerWidth) return null;
     var k = c.width / s.width;
@@ -306,7 +331,7 @@
     requestAnimationFrame(function () { dlg.classList.add('lit'); });
     if (from) {
       stage.animate([{ transform: from.t, borderRadius: from.r }, { transform: 'none', borderRadius: getComputedStyle(stage).borderRadius }],
-        { duration: 620, easing: EASE });
+        { duration: 700, easing: GLIDE });
     }
   }
   function closeFilm() {
@@ -326,8 +351,8 @@
     if (current) current.pause();
     var a = stage.animate(to ? [{ transform: 'none' }, { transform: to.t, borderRadius: to.r }]
                              : [{ transform: 'none', opacity: 1 }, { transform: 'scale(.94)', opacity: 0 }],
-      { duration: 460, easing: EASE, fill: 'forwards' });
-    after(a, 460, function () { done(); a.cancel(); });
+      { duration: 620, easing: GLIDE, fill: 'forwards' });
+    after(a, 620, function () { done(); a.cancel(); });
   }
   // A still of what is on screen, laid exactly over `el`, so it can leave while the next one arrives.
   function ghostOf(el, host, paint) {
@@ -350,7 +375,7 @@
     if (!dlg.open || busy) return;
     index = (index + dir + cards.length) % cards.length;
     var card = cards[index];
-    faceOf(card).closest('li').scrollIntoView({ block: 'nearest', inline: 'center' });   // so closing lands on the right card
+    nearestCopy(card).closest('li').scrollIntoView({ block: 'nearest', inline: 'center' });   // so closing lands on the right card
     if (!canAnimate) return mount(card);
     busy = true;
     var old = current;
@@ -398,10 +423,11 @@
     if (!vdlg) return;
     var big = document.getElementById('viewer-img'), cap = document.getElementById('viewer-cap');
     var vglow = document.getElementById('viewer-glow');
-    var shots = Array.prototype.slice.call(document.querySelectorAll('main figure img'));
+    var shots = Array.prototype.slice.call(document.querySelectorAll('main figure img')).filter(function (el) { return !el.hasAttribute('data-twin'); });
     var at = -1, vbusy = false;
 
     function rectOf(el) {               // the photo's place on the page, relative to the big one
+      el = nearestCopy(el);
       var c = el.getBoundingClientRect(), s = big.getBoundingClientRect();
       if (!c.width || !s.width || c.bottom < 0 || c.top > innerHeight || c.right < 0 || c.left > innerWidth) return null;
       var k = c.width / s.width;
@@ -424,7 +450,7 @@
       requestAnimationFrame(function () { vdlg.classList.add('lit'); });
       var from = canAnimate && rectOf(shots[i]);
       if (from) big.animate([{ transform: from.t, borderRadius: from.r }, { transform: 'none', borderRadius: getComputedStyle(big).borderRadius }],
-        { duration: 600, easing: EASE });
+        { duration: 680, easing: GLIDE });
     }
     function close() {
       if (!vdlg.open || vbusy) return;
@@ -438,13 +464,13 @@
       vbusy = true;
       var a = big.animate(to ? [{ transform: 'none' }, { transform: to.t, borderRadius: to.r }]
                              : [{ transform: 'none', opacity: 1 }, { transform: 'scale(.94)', opacity: 0 }],
-        { duration: 440, easing: EASE, fill: 'forwards' });
-      after(a, 440, function () { done(); a.cancel(); });
+        { duration: 600, easing: GLIDE, fill: 'forwards' });
+      after(a, 600, function () { done(); a.cancel(); });
     }
     function go(dir) {
       if (!vdlg.open || vbusy) return;
       var next = (at + dir + shots.length) % shots.length;
-      shots[next].scrollIntoView({ block: 'center', inline: 'center' });   // so closing lands on the right photo
+      nearestCopy(shots[next]).scrollIntoView({ block: 'center', inline: 'center' });   // so closing lands on the right photo
       if (!canAnimate) return show(next);
       vbusy = true;
       var ghost = ghostOf(big, vdlg, function (g, w, h) { g.drawImage(big, 0, 0, w, h); });
